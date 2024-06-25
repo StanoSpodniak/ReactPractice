@@ -4,8 +4,10 @@ import { useState } from "react";
 //import { BsFillCalendarFill } from 'react-icons/bs';
 import Like from "./components/Like";
 import Button from "./components/Button/Button";
+import NavBar from "./components/NavBar";
+import Cart from "./components/Cart";
 
-//Course https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45915382
+//Course https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45915726
 
 /*let items = ['New York',  'San Francisco', 'Tokyo', 'London', 'Paris'];
 
@@ -14,7 +16,8 @@ const handleSelectItem = (item: string) => {
 }*/
 
 function App() {
-  const[alertVisible, setAlertVisibility] = useState(false);
+  //const[alertVisible, setAlertVisibility] = useState(false);
+  const [cartItems, setCartItems] = useState(['Product1', 'Product2', 'Product3']);
 
   return (
     <div>
@@ -24,8 +27,10 @@ function App() {
       <Alert onClose={() => {setAlertVisibility(false)}}>
         My alert
       </Alert>}*/}
-      <Button color="danger" onClick={() => {setAlertVisibility(true)}}>My Button</Button>
-      <Like onClick={() => console.log("clicked")} />
+      {/*<Button color="danger" onClick={() => {setAlertVisibility(true)}}>My Button</Button>
+      <Like onClick={() => console.log("clicked")} />*/}
+      <NavBar cartItemsCount={cartItems.length}/>
+      <Cart cartItems={cartItems} onClear={() => setCartItems([])}/>
     </div>
   );
 }
