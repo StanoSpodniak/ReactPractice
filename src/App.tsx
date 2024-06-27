@@ -12,7 +12,7 @@ import Text from "./components/Text";
 import ExpandableText from "./components/ExpandableText";
 import Form from "./components/Form";
 
-//Course https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45915726
+//Course https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45915804
 
 /*let items = ['New York',  'San Francisco', 'Tokyo', 'London', 'Paris'];
 
