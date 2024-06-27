@@ -8,6 +8,9 @@ import NavBar from "./components/NavBar";
 import Cart from "./components/Cart";
 import Name from "./components/Name/Name";
 import ChangeNameButton from "./components/Name/ChangeNameButton";
+import Text from "./components/Text";
+import ExpandableText from "./components/ExpandableText";
+import Form from "./components/Form";
 
 //Course https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45915726
 
@@ -19,7 +22,7 @@ const handleSelectItem = (item: string) => {
 
 function App() {
   //const[alertVisible, setAlertVisibility] = useState(false);
-  const [cartItems, setCartItems] = useState(['Product1', 'Product2', 'Product3']);
+  /*const [cartItems, setCartItems] = useState(['Product1', 'Product2', 'Product3']);
 
   const [game, setGame] = useState({
     id: 1,
@@ -52,7 +55,9 @@ function App() {
         item.id === 2 ? { ...item, quantity: item.quantity + 1 } : item
       ),
     }));
-  }
+  }*/
+
+  let longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a neque vel lectus luctus viverra eget ut neque. Phasellus at leo consequat, commodo nisi a, fringilla nibh. Aenean id quam nec ligula rutrum bibendum. Pellentesque et odio enim. Etiam dictum mollis elit, sed accumsan nisl mattis finibus. Suspendisse posuere dapibus metus, non porttitor arcu rhoncus ac. Nulla pulvinar congue enim, at iaculis tellus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed a nunc feugiat, tincidunt odio quis, ornare enim. Pellentesque tristique euismod elit, nec sodales lorem porttitor sit amet. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Quisque erat quam, laoreet ac finibus a, lobortis nec quam. Cras dignissim pharetra mi vel vestibulum. Donec in magna odio. Proin rutrum gravida nunc vitae gravida!..."
 
   return (
     <div>
@@ -64,7 +69,7 @@ function App() {
       </Alert>}*/}
       {/*<Button color="danger" onClick={() => {setAlertVisibility(true)}}>My Button</Button>
       <Like onClick={() => console.log("clicked")} />*/}
-      <NavBar cartItemsCount={cartItems.length}/>
+      {/*<NavBar cartItemsCount={cartItems.length}/>
       <Cart cartItems={cartItems} onClear={() => setCartItems([])}/>
       <Name name={game.player.name} />
       <ChangeNameButton changeName={handleChangeName} />
@@ -77,7 +82,12 @@ function App() {
         {cart.items.map((item, index) => 
           <li key={index}>{item.quantity}</li>
         )}
-      </div>
+      </div>*/}
+      {/*<Text text={longText} length={50} />
+      <ExpandableText maxChars={10}>
+        Hello
+      </ExpandableText>*/}
+      <Form />
     </div>
   );
 }
