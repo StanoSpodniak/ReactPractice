@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 //import ListGroup from "./components/ListGroup";
 //import Alert from "./components/Alert";
 //import { BsFillCalendarFill } from 'react-icons/bs';
@@ -11,14 +11,24 @@ import ChangeNameButton from "./components/Name/ChangeNameButton";
 import Text from "./components/Text";
 import ExpandableText from "./components/ExpandableText";
 import Form from "./components/Form";
+import ProductList from "./components/ProductList";
+import apiClient, { CanceledError } from "./services/api-client";
 
-//Course https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45915804
+//Course https://members.codewithmosh.com/courses/ultimate-react-part1-1/lectures/45915914
 
 /*let items = ['New York',  'San Francisco', 'Tokyo', 'London', 'Paris'];
 
 const handleSelectItem = (item: string) => {
   console.log(item);
 }*/
+
+//const connect = () => console.log('Connecting');
+//const disconnect = () => console.log('Disconnecting');
+
+interface User {
+  id: number;
+  name: string;
+}
 
 function App() {
   //const[alertVisible, setAlertVisibility] = useState(false);
@@ -57,10 +67,122 @@ function App() {
     }));
   }*/
 
-  let longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a neque vel lectus luctus viverra eget ut neque. Phasellus at leo consequat, commodo nisi a, fringilla nibh. Aenean id quam nec ligula rutrum bibendum. Pellentesque et odio enim. Etiam dictum mollis elit, sed accumsan nisl mattis finibus. Suspendisse posuere dapibus metus, non porttitor arcu rhoncus ac. Nulla pulvinar congue enim, at iaculis tellus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed a nunc feugiat, tincidunt odio quis, ornare enim. Pellentesque tristique euismod elit, nec sodales lorem porttitor sit amet. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Quisque erat quam, laoreet ac finibus a, lobortis nec quam. Cras dignissim pharetra mi vel vestibulum. Donec in magna odio. Proin rutrum gravida nunc vitae gravida!..."
+  //let longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a neque vel lectus luctus viverra eget ut neque. Phasellus at leo consequat, commodo nisi a, fringilla nibh. Aenean id quam nec ligula rutrum bibendum. Pellentesque et odio enim. Etiam dictum mollis elit, sed accumsan nisl mattis finibus. Suspendisse posuere dapibus metus, non porttitor arcu rhoncus ac. Nulla pulvinar congue enim, at iaculis tellus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed a nunc feugiat, tincidunt odio quis, ornare enim. Pellentesque tristique euismod elit, nec sodales lorem porttitor sit amet. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Quisque erat quam, laoreet ac finibus a, lobortis nec quam. Cras dignissim pharetra mi vel vestibulum. Donec in magna odio. Proin rutrum gravida nunc vitae gravida!..."
+
+  /*const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (ref.current) ref.current.focus();
+  })
+
+  useEffect(() => {
+    document.title = 'My App';
+  })*/
+
+  //const [category, setCategory] = useState('');
+
+  /*useEffect(() => {
+    connect();
+
+    return () => disconnect();
+  });*/
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [error, setError] = useState('');
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    setLoading(true); 
+    apiClient
+      .get<User[]>('/users/', { signal: controller.signal})
+      .then((res) => {
+        setUsers(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return;
+        setError(err.message);
+        setLoading(false);
+      });
+    return () => controller.abort();
+  }, []);
+
+  /*useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await axios
+          .get<User[]>('https://jsonplaceholder.typicode.com/users')
+        setUsers(res.data);
+      }
+      catch (err) {
+        setError((err as AxiosError).message);
+      }
+    }
+
+    fetchUsers();
+  }, []);*/
+
+  const deleteUser = (user: User) => {
+    const originalUsers = [...users];
+    setUsers(users.filter(u => u.id != user.id))
+
+    apiClient.delete('/users/' + user.id)
+      .catch(err => {
+        setError(err.message);
+        setUsers(originalUsers);
+      })
+  }
+
+  const addUser = () => {
+    const originalUsers = [...users];
+    const newUser = { id: 0, name: 'Stano' };
+    setUsers([newUser, ...users]);
+
+    apiClient.post('/users/', newUser)
+      .then(({ data: savedUser }) => setUsers([savedUser, ...users]))
+      .catch(err => {
+        setError(err.message);
+        setUsers(originalUsers);
+      })
+  }
+
+  const updateUser =(user: User) => {
+    const originalUsers = [...users];
+    const updatedUser= {...user, name: user.name + '!'};
+    setUsers(users.map(u => u.id === user.id ? updatedUser : u))
+
+    apiClient.patch('/users/' + user.id, updatedUser)
+    .catch(err => {
+      setError(err.message);
+      setUsers(originalUsers);
+    })
+  }
 
   return (
     <div>
+      {error && <p className="text-danger">{error}</p>}
+      {isLoading && <div className="spinner-border"></div>}
+      <button className="btn btn-primary mb-3" onClick={addUser}>Add</button>
+      <ul className="list-group">
+        {users.map((user) => (
+          <li key={user.id} className="list-group-item d-flex justify-content-between">
+            {user.name}
+            <div>
+              <button className="btn btn-outline-secondary mx-3" onClick={() => updateUser(user)}>Update</button>
+              <button className="btn btn-outline-danger" onClick={() => deleteUser(user)}>Delete</button>
+            </div>
+          </li>))}
+      </ul>
+
+      {/*<select className="form-select" onChange={(event) => setCategory(event.target.value)}>
+        <option value=""></option>
+        <option value="Clothing">Clothing</option>
+        <option value="Household">Household</option>
+      </select>
+      <ProductList category={category} />*/}
+      {/*<input ref={ref} type="text" className="form-control" />*/}
       {/*<ListGroup items={items} heading="Cities" onSelectItem={handleSelectItem}/>
       <BsFillCalendarFill color="red" size="40" />*/}
       {/*{alertVisible && 
@@ -87,7 +209,7 @@ function App() {
       <ExpandableText maxChars={10}>
         Hello
       </ExpandableText>*/}
-      <Form />
+      {/*<Form />*/}
     </div>
   );
 }
